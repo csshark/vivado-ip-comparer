@@ -1,12 +1,12 @@
 #!/bin/bash
-
-if [ $# -ne 2 ]; then
-  echo "Usage: $0 <old_vivado_project_dir> <new_vivado_project_dir>"
+if [ $# -lt 2 ]; then
+  echo "Usage: $0 <old_vivado_project_dir> <new_vivado_project_dir> [<specific_ip_name>]"
   exit 1
 fi
 
-OLD_PROJECT_DIR=$1
-NEW_PROJECT_DIR=$2
+OLD_PROJECT_DIR=$(realpath "$1")
+NEW_PROJECT_DIR=$(realpath "$2")
+SPECIFIC_IP=${3:-""}
 
 if [ ! -d "$OLD_PROJECT_DIR" ]; then
   echo "Old Vivado project directory does not exist: $OLD_PROJECT_DIR"
@@ -36,7 +36,13 @@ mkdir -p "$LOG_DIR"
 
 echo "Comparing IP cores from previous version to new version..."
 
-diff -r "$OLD_IP_DIR" "$NEW_IP_DIR" > "$LOG_DIR/ip_comparison_diff.txt"
+if [ -z "$SPECIFIC_IP" ]; then
+  # Compare all IP cores
+  rsync -rvn --delete "$OLD_IP_DIR/" "$NEW_IP_DIR/" > "$LOG_DIR/ip_comparison_diff.txt"
+else
+  # Compare specific IP core
+  rsync -rvn --delete "$OLD_IP_DIR/$SPECIFIC_IP/" "$NEW_IP_DIR/$SPECIFIC_IP/" > "$LOG_DIR/ip_comparison_diff.txt"
+fi
 
 if [ -s "$LOG_DIR/ip_comparison_diff.txt" ]; then
   echo "Differences found between IP cores. Check the log file: $LOG_DIR/ip_comparison_diff.txt"
