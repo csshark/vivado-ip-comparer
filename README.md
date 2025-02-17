@@ -1,7 +1,10 @@
 <h2>vivado-comparer</h2>
 
 <h4>Usage:</h4>
+<h5>Compare all IPcores with each other:</h5>
 <pre><code>./VivadoComparer.sh /old/vivado/project/dir /new/vivado/project/dir</code></pre>
+<h5>Compare one specified IPcore to upgraded one:</h5>
+<pre><code>./VivadoComparer.sh /old/vivado/project/dir /new/vivado/project/dir specified_ip_core_name</code></pre>
 
 <h4>Allow file to be executed propely:</h4>
 <pre><code>chmod +x VivadoComparer.sh</code></pre>
